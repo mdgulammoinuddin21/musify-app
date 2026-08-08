@@ -1,0 +1,54 @@
+# ==========================================
+# React - User Application
+# ==========================================
+musify-app/node_modules/
+musify-app/dist/
+musify-app/build/
+
+# ==========================================
+# React - Admin Application
+# ==========================================
+musify-admin-app/node_modules/
+musify-admin-app/dist/
+musify-admin-app/build/
+
+# ==========================================
+# Spring Boot / Maven - Backend
+# ==========================================
+musify-backend/target/
+
+# Maven logs
+*.log
+
+# ==========================================
+# Environment / Secrets
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# Spring Boot local configuration
+application-local.properties
+application-secret.properties
+
+# ==========================================
+# IDE
+# ==========================================
+.idea/
+*.iml
+
+.vscode/
+
+# Eclipse / Spring Tool Suite
+.classpath
+.project
+.settings/
+.apt_generated/
+.factorypath
+
+# ==========================================
+# OS
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
