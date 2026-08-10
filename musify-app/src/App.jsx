@@ -1,6 +1,12 @@
+import Login from "./components/login";
+import Register from "./components/register";
+
 const App = () => {
   return (
-    <div className="text-3xl font-bold underline">App Component</div>
+    <div>
+      <Login></Login>
+      <Register></Register>
+    </div>
   )
 }
 
