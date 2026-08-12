@@ -3,7 +3,7 @@ import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-const Register = () => {
+const Register = ({onSwitchToLogin}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,6 +37,7 @@ const Register = () => {
 
       if (result.success) {
         toast.success(result.message);
+        onSwitchToLogin();
       } else {
         toast.error(result.message);
         setError(result.message+"hi");
@@ -171,12 +172,20 @@ const Register = () => {
               />
             </div>
 
-            {/* Register Button */}
+            {/* Submit button */}
             <button
-              type="submit"
-              className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-black font-semibold rounded-lg transition duration-200"
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-black font-semibold bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
             >
-              Create Account
+                {loading ? (
+                    <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                        Creating account...
+                    </div>
+                ) : (
+                    "Create Account"
+                )}
             </button>
 
           </form>
@@ -185,12 +194,12 @@ const Register = () => {
           <p className="text-center text-gray-400 text-sm mt-6">
             Already have an account?{" "}
 
-            <a
-              href="/login"
+            <button
+              onClick={onSwitchToLogin}
               className="text-green-400 hover:text-green-300 font-medium transition"
             >
               Sign in here
-            </a>
+            </button>
           </p>
 
         </div>

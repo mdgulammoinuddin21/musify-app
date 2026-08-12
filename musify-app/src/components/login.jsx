@@ -3,7 +3,7 @@ import { assets } from "../assets/assets";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 
-const Login = () => {
+const Login = ({onSwitchToRegister}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +27,8 @@ const Login = () => {
     try {
         const result = await login(email, password);
 
+        console.log("Result from login:", result);
+
         if (result.success) {
         toast.success(result.message);
 
@@ -35,14 +37,16 @@ const Login = () => {
         console.log("Role:", result.role);
 
         
-        } else {
-        toast.error(result.message);
+        }
+        else {
+          
+          toast.error(result.message);
         }
     } catch (e) {
-        toast.error(
-        "An unexpected error occurred. Please try again later."
-        );
-        setError(e.message);
+        console.error("Unexpected login error:", error);
+
+        setError("An unexpected error occurred.");
+        toast.error("An unexpected error occurred. Please try again later.");
     }finally {
         setLoading(false);
     }
@@ -139,12 +143,20 @@ const Login = () => {
               </p>
             )}
 
-            {/* Login Button */}
+            {/* Submit button */}
             <button
-              type="submit"
-              className="w-full py-3 px-4 bg-green-500 hover:bg-green-600 text-black font-semibold rounded-lg transition duration-200"
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-black font-semibold bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
             >
-              Sign In
+                {loading ? (
+                    <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                        Signing in...
+                    </div>
+                ) : (
+                    "Sign In"
+                )}
             </button>
 
           </form>
@@ -153,12 +165,12 @@ const Login = () => {
           <p className="text-center text-gray-400 text-sm mt-6">
             Don't have an account?{" "}
 
-            <a
-              href="/register"
+            <button
+              onClick={onSwitchToRegister}
               className="text-green-400 hover:text-green-300 font-medium transition"
             >
               Sign up here
-            </a>
+            </button>
           </p>
 
         </div>

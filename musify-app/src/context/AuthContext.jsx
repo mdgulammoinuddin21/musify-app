@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 export const AuthContext = createContext(null);
@@ -27,6 +27,20 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(savedToken || null);
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+
+    const storedToken = localStorage.getItem("userToken");
+    const storedUser = localStorage.getItem("userData");
+
+    if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+    }
+
+    setLoading(false);
+}, []);
 
   // =========================
   // REGISTER
@@ -105,7 +119,7 @@ export const AuthProvider = ({ children }) => {
 
         // Save authentication data
         localStorage.setItem("userToken", data.token);
-        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("userData", JSON.stringify(userData));
 
         // Update React state
         setToken(data.token);
@@ -128,7 +142,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Login error:", error);
 
       const message =
-        error.response?.data?.message || "Email/Password is incorrect";
+        error.response.data || "Email/Password is incorrect";
 
       return {
         success: false,
@@ -138,6 +152,11 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+
+  const isAuthenticated = () => {
+    return !!token && !!user;
+  }
 
   // =========================
   // LOGOUT
@@ -160,7 +179,7 @@ export const AuthProvider = ({ children }) => {
     register,
     login,
     logout,
-    isAuthenticated: !!token,
+    isAuthenticated,
   };
 
   return (
