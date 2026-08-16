@@ -41,6 +41,7 @@ const Login = ({onSwitchToRegister}) => {
         else {
           
           toast.error(result.message);
+          setError(result.message);
         }
     } catch (e) {
         console.error("Unexpected login error:", error);

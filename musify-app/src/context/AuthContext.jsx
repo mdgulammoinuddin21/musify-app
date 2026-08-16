@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 export const AuthContext = createContext(null);
+export const API_BASE_URL = "http://localhost:8080";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -14,11 +15,9 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const API_BASE_URL = "http://localhost:8080";
-
   // Get previously saved authentication data
   const savedToken = localStorage.getItem("userToken");
-  const savedUser = localStorage.getItem("user");
+  const savedUser = localStorage.getItem("userData");
 
   const [user, setUser] = useState(
     savedUser ? JSON.parse(savedUser) : null
@@ -26,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   const [token, setToken] = useState(savedToken || null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -46,8 +45,6 @@ export const AuthProvider = ({ children }) => {
   // REGISTER
   // =========================
   const register = async (email, password) => {
-    setLoading(true);
-
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/auth/register`,
@@ -158,20 +155,23 @@ export const AuthProvider = ({ children }) => {
     return !!token && !!user;
   }
 
-  // =========================
-  // LOGOUT
-  // =========================
+  
   const logout = () => {
     localStorage.removeItem("userToken");
-    localStorage.removeItem("user");
+    localStorage.removeItem("userData");
 
     setToken(null);
     setUser(null);
   };
 
-  // =========================
-  // CONTEXT VALUE
-  // =========================
+  const getAuthHeaders = () => {
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+  
   const contextValue = {
     user,
     token,
@@ -180,6 +180,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated,
+    getAuthHeaders
   };
 
   return (

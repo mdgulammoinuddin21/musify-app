@@ -92,7 +92,7 @@ const Register = ({onSwitchToLogin}) => {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3">
+              <div className="bg-red-500/20 border border-red-500 rounded-lg p-3 text-red-300 text-sm text-center">
                 {error}
               </div>
             )}
