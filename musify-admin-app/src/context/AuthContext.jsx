@@ -1,38 +1,109 @@
-import {
-    createContext,
-    useContext,
-    useState
-} from "react";
+import axios from "axios";
+import { createContext, useContext, useEffect, useState } from "react";
+import { API_BASE_URL } from "../App";
 
 export const AuthContext = createContext();
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
+  const context = useContext(AuthContext);
 
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
 
-    return context;
+  return context;
 };
 
 export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("adminToken"));
+  const [loading, setLoading] = useState(true);
 
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(
-        localStorage.getItem("adminToken")
-    );
-    const [loading, setLoading] = useState(true);
+  const login = async (email, password) => {
+    try {
+      setLoading(true);
 
-    const contextValue = {
-        user,
-        token,
-        loading
-    };
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+        email,
+        password,
+      });
 
-    return (
-        <AuthContext.Provider value={contextValue}>
-            {children}
-        </AuthContext.Provider>
-    );
+      if (response.status === 200) {
+        setToken(response.data.token);
+
+        setUser({
+          email: response.data.email,
+          role: response.data.role,
+        });
+
+        localStorage.setItem("adminToken", response.data.token);
+
+        localStorage.setItem(
+          "adminUser",
+          JSON.stringify({
+            email: response.data.email,
+            role: response.data.role,
+          }),
+        );
+
+        return {
+          success: true,
+        };
+      } else {
+        return {
+          success: false,
+          message: response.data.message || "Login failed",
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Login failed",
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("adminToken");
+    const storedUser = localStorage.getItem("adminUser");
+
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
+
+    setLoading(false);
+  }, []);
+
+  const isAuthenticated = () => {
+    return !!token && !!user;
+  };
+
+  const isAdmin = () => {
+    return user && user.role === "ADMIN";
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminUser");
+  };
+
+  const contextValue = {
+    user,
+    token,
+    loading,
+    login,
+    logout,
+    isAdmin,
+    isAuthenticated
+  };
+
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 };

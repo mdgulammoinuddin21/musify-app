@@ -3,11 +3,12 @@ import { Toaster } from "react-hot-toast";
 
 import { AuthProvider } from "./context/AuthContext.jsx";
 
-import Login from "./Login.jsx";
-import AddSong from "./AddSong.jsx";
-import ListSong from "./ListSong.jsx";
-import AddAlbum from "./AddAlbum.jsx";
-import ListAlbum from "./ListAlbum.jsx";
+import AddSong from "./pages/AddSong.jsx";
+import ListSong from "./pages/ListSong.jsx";
+import AddAlbum from "./pages/AddAlbum.jsx";
+import ListAlbum from "./pages/ListAlbum.jsx";
+import Login from "./pages/Login.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export const API_BASE_URL = "http://localhost:8080";
 
@@ -22,20 +23,40 @@ const App = () => {
           <Route path="/login" element={<Login />} />
 
           {/* Songs */}
-          <Route path="/add-song" element={<AddSong />} />
+          <Route path="/add-song" element={
+            <ProtectedRoute requireAdmin={true}>
+              <AddSong></AddSong>
+            </ProtectedRoute>
+          } />
 
-          <Route path="/list-songs" element={<ListSong />} />
+          <Route path="/list-songs" element={
+            <ProtectedRoute requireAdmin={true}>
+              <ListSong></ListSong>
+            </ProtectedRoute>
+          } />
 
           {/* Albums */}
-          <Route path="/add-album" element={<AddAlbum />} />
+          <Route path="/add-album" element={
+            <ProtectedRoute requireAdmin={true}>
+              <AddAlbum></AddAlbum>
+            </ProtectedRoute>
+          } />
 
-          <Route path="/list-albums" element={<ListAlbum />} />
+          <Route path="/list-albums" element={
+            <ProtectedRoute requireAdmin={true}>
+              <ListAlbum></ListAlbum>
+            </ProtectedRoute>
+          } />
 
           {/* Default route */}
           <Route path="/" element={<Login />} />
 
           {/* Unknown route */}
-          <Route path="*" element={<AddSong />} />
+          <Route path="*" element={
+            <ProtectedRoute requireAdmin={true}>
+              <AddSong></AddSong>
+            </ProtectedRoute>
+          } />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
