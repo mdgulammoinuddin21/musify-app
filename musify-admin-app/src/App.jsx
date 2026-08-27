@@ -10,7 +10,6 @@ import ListAlbum from "./pages/ListAlbum.jsx";
 import Login from "./pages/Login.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
-export const API_BASE_URL = "http://localhost:8080";
 
 const App = () => {
   return (
