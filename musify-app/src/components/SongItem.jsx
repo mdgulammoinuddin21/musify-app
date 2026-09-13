@@ -5,7 +5,7 @@ const SongItem = ({ image, name, desc, id }) => {
   const navigate = useNavigate();
 
   const handleAlbumClick = () => {
-    navigate(`/album/${id}`);
+    navigate(`/song/${id}`);
   };
 
   return (

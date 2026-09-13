@@ -7,7 +7,7 @@ import { assets } from "../assets/assets.js";
 const DisplayAlbum = () => {
     const { id } = useParams();
 
-    const { albumsData, songsData } = useContext(PlayerContext);
+    const { albumsData, songsData, playWithId } = useContext(PlayerContext);
 
     const album = albumsData?.find((item) => item?._id === id);
 
@@ -64,6 +64,7 @@ const DisplayAlbum = () => {
                     <div
                         className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer"
                         key={item?._id || index}
+                        onClick={() => playWithId(item?._id)}
                     >
                         <p className="text-white">
                             <b className="mr-4 text-[#a7a7a7]">

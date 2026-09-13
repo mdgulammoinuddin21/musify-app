@@ -41,9 +41,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
 }, []);
 
-  // =========================
   // REGISTER
-  // =========================
   const register = async (email, password) => {
     try {
       const response = await axios.post(
@@ -81,9 +79,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // =========================
   // LOGIN
-  // =========================
   const login = async (email, password) => {
     setLoading(true);
 
@@ -93,6 +89,7 @@ export const AuthProvider = ({ children }) => {
         {
           email,
           password,
+          portal: "user"
         }
       );
 

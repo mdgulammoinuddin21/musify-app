@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { PlayerContext } from "../context/PlayerContext";
 import AlbumItem from "./AlbumItem";
+import SongItem from "./SongItem";
 
 const DisplayHome = () => {
   const { songsData, albumsData } = useContext(PlayerContext);
@@ -16,7 +17,7 @@ const DisplayHome = () => {
         <div className="flex overflow-auto">
           {albumsData.map((item) => (
             <AlbumItem
-              key={item.id}
+              key={item._id}
               name={item.name}
               desc={item.desc}
               id={item._id}
@@ -32,8 +33,8 @@ const DisplayHome = () => {
 
         <div className="flex overflow-auto">
           {songsData.map((item) => (
-            <AlbumItem
-              key={item.id}
+            <SongItem
+              key={item._id}
               name={item.name}
               desc={item.desc}
               id={item._id}

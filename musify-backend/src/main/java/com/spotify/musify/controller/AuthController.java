@@ -1,5 +1,7 @@
 package com.spotify.musify.controller;
 
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +38,13 @@ public class AuthController {
 	public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
 	    try {
+	    	
+	    	User existingUser = userService.findByEmail(request.getEmail());
+	    	if(request.getPortal().equalsIgnoreCase("admin") && 
+	    			existingUser.getRole().name().equalsIgnoreCase("user")) {
+	    		
+	    		return ResponseEntity.badRequest().body("Email/Password is incorrect");
+	    	}
 
 	        authenticationManager.authenticate(
 	                new UsernamePasswordAuthenticationToken(
@@ -45,7 +54,6 @@ public class AuthController {
 	        );
 	        
 	        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-	        User existingUser = userService.findByEmail(request.getEmail());
 	        
 	        String token = jwtUtil.generateToken(userDetails, existingUser.getRole().name());
 	        
@@ -87,6 +95,22 @@ public class AuthController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
+        }
+    }
+    
+    @PostMapping("/promote-admin")
+    public ResponseEntity<?> promoteToAdmin(@RequestBody Map<String, String> request) {
+        try {
+            User user = userService.promoteToAdmin(request.get("email"));
+
+            return ResponseEntity.ok(
+                new AuthResponse(null, user.getEmail(), "ADMIN")
+            );
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Failed to promote user to admin");
         }
     }
 }

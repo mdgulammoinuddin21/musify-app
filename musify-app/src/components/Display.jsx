@@ -5,6 +5,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 
 import DisplayHome from "./DisplayHome.jsx";
 import DisplayAlbum from "./DisplayAlbum.jsx";
+import DisplaySong from "./DisplaySong.jsx";
 import Search from "./Search.jsx";
 
 const Display = () => {
@@ -59,6 +60,12 @@ const Display = () => {
           <Route
             path="/"
             element={<DisplayHome />}
+          />
+
+          {/* Single Song */}
+          <Route
+            path="/song/:id"
+            element={<DisplaySong />}
           />
 
           {/* Album */}

@@ -1,7 +1,8 @@
 import { Check, Music, Image } from "lucide-react";
 import DashboardLayout from "../layout/DashboardLayout";
 import { useEffect, useState } from "react";
-import { albumsAPI } from "../services/apiService";
+import { albumsAPI, songsAPI } from "../services/apiService";
+import toast from "react-hot-toast";
 
 const AddSong = () => {
   const [image, setImage] = useState(null);
@@ -12,13 +13,70 @@ const AddSong = () => {
   const [loading, setLoading] = useState(false);
   const [albumData, setAlbumData] = useState([]);
 
-  const onSubmitHandler = (e) => {};
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    if (!name.trim()) {
+      toast.error("Please enter song name");
+      return;
+    }
+
+    if (!desc.trim()) {
+      toast.error("Please enter song description");
+      return;
+    }
+
+    if (!song) {
+      toast.error("Please select an audio file");
+      return;
+    }
+
+    if (!image) {
+      toast.error("Please select an image");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+
+      const request = {
+        name,
+        desc,
+        album,
+      };
+
+      formData.append("request", JSON.stringify(request));
+      formData.append("audio", song);
+      formData.append("image", image);
+
+      const response = await songsAPI.add(formData);
+
+      if (response.status === 201) {
+        toast.success("Song added!");
+
+        setName("");
+        setDesc("");
+        setAlbum("none");
+        setImage(false);
+        setSong(false);
+      }
+    } catch (error) {
+      console.error("Error adding song:", error);
+      toast.error("Something went wrong while adding song.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadAlbumData = async () => {
     try {
       const response = await albumsAPI.list();
+      const response2 = await songsAPI.list();
 
       console.log("Album response:", response.data);
+      console.log("Song response:", response2.data);
 
       setAlbumData(response.data.albums);
     } catch (error) {
@@ -130,7 +188,7 @@ const AddSong = () => {
             />
           </div>
 
-            {/* Album dropdown */}
+          {/* Album dropdown */}
           <div className="flex flex-col gap-2.5">
             <p>Album</p>
 
